@@ -24,10 +24,15 @@ contacts.each do |contact|
   session.find('._1U1xa').click
   sleep(1)
 
-  last_chat_bubble = session.all('._1qPwk').last
+  # Rescueing from StaleElementReferenceError
+  begin
+    last_chat_bubble = session.all('._1qPwk').last
 
-  until !last_chat_bubble.has_css?('span[aria-label=" Pending "]')
-    puts 'Message pending'
-    sleep(1)
+    until !last_chat_bubble.has_css?('span[aria-label=" Pending "]')
+      puts 'Message pending'
+      sleep(1)
+    end
+  rescue Selenium::WebDriver::Error::StaleElementReferenceError
+    retry
   end
 end
